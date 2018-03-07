@@ -1,0 +1,62 @@
+Subject: [PATCH] Debian test for bash package
+
+---
+ bash-4.4.18/debian/tests/bash.sh | 37 +++++++++++++++++++++++++++++++++++++
+ bash-4.4.18/debian/tests/control |  2 ++
+ 2 files changed, 39 insertions(+)
+ create mode 100644 bash-4.4.18/debian/tests/bash.sh
+ create mode 100644 bash-4.4.18/debian/tests/control
+
+diff --git a/bash-4.4.18/debian/tests/bash.sh b/bash-4.4.18/debian/tests/bash.sh
+new file mode 100644
+index 0000000..e605aca
+--- /dev/null
++++ b/bash-4.4.18/debian/tests/bash.sh
+@@ -0,0 +1,37 @@
++#!/bin/sh
++# Creare debian test for bash package
++
++set -e
++# create file test1.txt for test
++cat <<EOF > test1.txt
++echo "Hello bash!"
++EOF
++# expected when run test
++echo "Hello bash!" > expected1.txt
++# run bash command to run script in file test1.txt
++bash test1.txt > output1.txt
++diff output1.txt expected1.txt
++echo "PASS"
++
++# create file test1.txt for test
++cat <<EOF > test2.txt
++a=20
++b=20
++if [ $a == $b ]
++then
++  echo "a is equal to b"
++else
++  echo "a is not equal to b"
++fi
++EOF
++echo "a is equal to b" > expected2.txt
++# run bash command to run script in file test2.txt
++bash test2.txt > output2.txt
++diff output2.txt expected2.txt
++echo "PASS"
++
++# remove nonecessery file
++rm output*
++rm expected*
++
++echo "=====DONE======"
+diff --git a/bash-4.4.18/debian/tests/control b/bash-4.4.18/debian/tests/control
+new file mode 100644
+index 0000000..de70cc1
+--- /dev/null
++++ b/bash-4.4.18/debian/tests/control
+@@ -0,0 +1,2 @@
++Tests: bash.sh
++Depends: @
+-- 
+2.16.1

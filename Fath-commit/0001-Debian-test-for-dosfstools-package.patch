@@ -1,0 +1,71 @@
+Subject: [PATCH] Debian test for dosfstools package
+
+---
+ dosfstools-4.1/debian/tests/control       |  3 ++
+ dosfstools-4.1/debian/tests/dosfstools.sh | 46 +++++++++++++++++++++++++++++++
+ 2 files changed, 49 insertions(+)
+ create mode 100644 dosfstools-4.1/debian/tests/control
+ create mode 100755 dosfstools-4.1/debian/tests/dosfstools.sh
+
+diff --git a/dosfstools-4.1/debian/tests/control b/dosfstools-4.1/debian/tests/control
+new file mode 100644
+index 0000000..4473fce
+--- /dev/null
++++ b/dosfstools-4.1/debian/tests/control
+@@ -0,0 +1,3 @@
++Tests: dosfstools.sh
++Depends: @
++Restrictions: needs-root, allow-stderr
+diff --git a/dosfstools-4.1/debian/tests/dosfstools.sh b/dosfstools-4.1/debian/tests/dosfstools.sh
+new file mode 100755
+index 0000000..9c58b26
+--- /dev/null
++++ b/dosfstools-4.1/debian/tests/dosfstools.sh
+@@ -0,0 +1,46 @@
++#!/bin/sh
++# DESCRIPTION: Create debian test for dosfstools package
++
++set -e
++# create device for test
++dd if=/dev/loop0 of=image.img bs=1M count=1024
++device="/dev/loop0"
++
++#make linux ext2 filesystem on /dev/loop0
++mkfs $device
++# veryfi that it created ext2 file system
++file -sL $device > result1.txt
++# make specify linux filesystem type 
++mkfs -t ext3 $device
++# veryfi that it created ext3 file system
++file -sL $device > result2.txt
++# specify a block count in mkfs
++mkfs $device 10000 > result3.txt
++# just get report about errors
++fsck -n $device > result4.txt
++
++# Expected value when run test
++echo "Linux rev 1.0 ext2 filesystem data," > expected1
++echo "Linux rev 1.0 ext3 filesystem data," > expected2
++echo "Creating filesystem with 10000 blocks" > expected3
++echo "$device: clean," > expected4
++
++# Output value when run test
++grep -e "Linux rev" result1.txt | awk '{print $2, $3, $4, $5, $6, $7}' > output1
++grep -e "Linux rev" result2.txt | awk '{print $2, $3, $4, $5, $6, $7}' > output2
++grep -e "Creating filesystem" result3.txt | awk '{print $1, $2, $3, $4, $6}' > output3
++grep -e "$device:" result4.txt | awk '{print $1, $2}' > output4
++
++for var in 1 2 3 4
++do
++diff expected$var output$var
++echo "PASS"
++done
++
++# Delete non-necesscery file after run test
++rm -f output*
++rm -f expected*
++rm -f result*
++
++echo  "=====DONE====="
+-- 
+2.16.1
