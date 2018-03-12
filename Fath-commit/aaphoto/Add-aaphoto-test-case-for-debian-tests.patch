@@ -1,0 +1,52 @@
+diff --git a/aaphoto-0.45/debian/tests/aaphoto_script b/aaphoto-0.45/debian/tests/aaphoto_script
+new file mode 100644
+index 0000000..68b99ef
+--- /dev/null
++++ b/aaphoto-0.45/debian/tests/aaphoto_script
+@@ -0,0 +1,34 @@
++#!/bin/sh
++
++set -e
++
++#Package name here
++pkg=aaphoto
++
++if [ "$ADTTMP" = "" ] ; then
++  ADTTMP=`mktemp -d /tmp/${pkg}-test.XXXXXX`
++fi
++
++cd $ADTTMP
++
++echo "====Start $pkg===="
++
++log_file=$pkg".log"
++scr_shot=screen_shot.png
++scr_shot_tranf=screen_shot_new.jpg
++
++scrot $scr_shot
++size_exp=`expr $(identify -format '%w' $scr_shot) / 2`x`expr $(identify -format '%h' $scr_shot) / 2`
++format_exp=JPEG
++
++aaphoto --resize50% --jpg --silent $scr_shot
++
++identify -verbose $scr_shot_tranf | grep Geometry > $log_file
++grep -q $size_exp $log_file
++echo PASS
++
++identify -verbose $scr_shot_tranf | grep Format > $log_file
++grep -q $format_exp $log_file
++echo PASS
++
++echo "====Done===="
+diff --git a/aaphoto-0.45/debian/tests/control b/aaphoto-0.45/debian/tests/control
+new file mode 100644
+index 0000000..9bc1c60
+--- /dev/null
++++ b/aaphoto-0.45/debian/tests/control
+@@ -0,0 +1,3 @@
++Tests: aaphoto_script
++Depends: @, scrot, imagemagick, grep
++Restrictions: needs-root
+-- 
+2.15.1
+

@@ -1,0 +1,131 @@
+diff --git a/diffutils-3.6/debian/tests/control b/diffutils-3.6/debian/tests/control
+new file mode 100644
+index 0000000..1575e33
+--- /dev/null
++++ b/diffutils-3.6/debian/tests/control
+@@ -0,0 +1,2 @@
++Tests: diffutils_script
++Depends: @
+diff --git a/diffutils-3.6/debian/tests/diffutils_script b/diffutils-3.6/debian/tests/diffutils_script
+new file mode 100644
+index 0000000..fc38a4a
+--- /dev/null
++++ b/diffutils-3.6/debian/tests/diffutils_script
+@@ -0,0 +1,34 @@
++#!/bin/sh
++
++set -e
++
++#Package name here
++pkg=diffutils
++
++if [ "$ADTTMP" = "" ] ; then
++  ADTTMP=`mktemp -d /tmp/${pkg}-test.XXXXXX`
++fi
++
++cd debian/tests/testing-data/
++file1=file1; file2=file2; file3=file3; doe=diff_output_expected; d3oe=diff3_output_expected; sdoe=sdiff_output_expected
++cp $file1 $file2 $file3 $doe $d3oe $sdoe $ADTTMP
++cd $ADTTMP
++
++echo "====Start $pkg===="
++
++log_file=$pkg".log"
++ignore_message="Ignored unnecessary status!"
++
++diff $file1 $file2 > $log_file 2>&1 || echo $ignore_message
++cmp $log_file $doe
++echo "PASS"
++
++diff3 $file1 $file2 $file3 > $log_file 2>&1 || echo $ignore_message
++cmp $log_file $d3oe
++echo "PASS"
++
++sdiff $file1 $file2 > $log_file 2>&1 || echo $ignore_message
++cmp $log_file $sdoe 
++echo "PASS"
++
++echo "====Done===="
+diff --git a/diffutils-3.6/debian/tests/testing-data/diff3_output_expected b/diffutils-3.6/debian/tests/testing-data/diff3_output_expected
+new file mode 100644
+index 0000000..a54e02b
+--- /dev/null
++++ b/diffutils-3.6/debian/tests/testing-data/diff3_output_expected
+@@ -0,0 +1,16 @@
++====
++1:2c
++  line2-file1
++2:2c
++  line2-file2
++3:2c
++  line2-file3
++====
++1:4c
++  line4-file1
++2:4,5c
++  line4-file2
++  line5-file2
++3:4,5c
++  baby don't give up
++  move on
+diff --git a/diffutils-3.6/debian/tests/testing-data/diff_output_expected b/diffutils-3.6/debian/tests/testing-data/diff_output_expected
+new file mode 100644
+index 0000000..f2ab90f
+--- /dev/null
++++ b/diffutils-3.6/debian/tests/testing-data/diff_output_expected
+@@ -0,0 +1,9 @@
++2c2
++< line2-file1
++---
++> line2-file2
++4c4,5
++< line4-file1
++---
++> line4-file2
++> line5-file2
+diff --git a/diffutils-3.6/debian/tests/testing-data/file1 b/diffutils-3.6/debian/tests/testing-data/file1
+new file mode 100644
+index 0000000..65ede4b
+--- /dev/null
++++ b/diffutils-3.6/debian/tests/testing-data/file1
+@@ -0,0 +1,4 @@
++#diff file testing
++line2-file1
++abc
++line4-file1
+diff --git a/diffutils-3.6/debian/tests/testing-data/file2 b/diffutils-3.6/debian/tests/testing-data/file2
+new file mode 100644
+index 0000000..dd93be1
+--- /dev/null
++++ b/diffutils-3.6/debian/tests/testing-data/file2
+@@ -0,0 +1,5 @@
++#diff file testing
++line2-file2
++abc
++line4-file2
++line5-file2
+diff --git a/diffutils-3.6/debian/tests/testing-data/file3 b/diffutils-3.6/debian/tests/testing-data/file3
+new file mode 100644
+index 0000000..5d43d10
+--- /dev/null
++++ b/diffutils-3.6/debian/tests/testing-data/file3
+@@ -0,0 +1,5 @@
++#diff file testing
++line2-file3
++abc
++baby don't give up
++move on
+diff --git a/diffutils-3.6/debian/tests/testing-data/sdiff_output_expected b/diffutils-3.6/debian/tests/testing-data/sdiff_output_expected
+new file mode 100644
+index 0000000..23e2ca0
+--- /dev/null
++++ b/diffutils-3.6/debian/tests/testing-data/sdiff_output_expected
+@@ -0,0 +1,5 @@
++#diff file testing						#diff file testing
++line2-file1						      |	line2-file2
++abc								abc
++line4-file1						      |	line4-file2
++							      >	line5-file2
+-- 
+2.15.1
+

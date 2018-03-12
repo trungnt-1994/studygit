@@ -1,0 +1,46 @@
+diff --git a/debian/tests/control b/debian/tests/control
+new file mode 100644
+index 0000000..a214c84
+--- /dev/null
++++ b/debian/tests/control
+@@ -0,0 +1,2 @@
++Tests: csh-test
++Depends: @
+diff --git a/debian/tests/csh-test b/debian/tests/csh-test
+new file mode 100644
+index 0000000..a59fe2e
+--- /dev/null
++++ b/debian/tests/csh-test
+@@ -0,0 +1,32 @@
++#!/bin/sh
++
++#
++# Create sample.csh executable file then run with bsd-csh
++#
++
++set -e
++
++# Create sample.csh file for testing
++cat <<EOF> sample.csh
++#!/bin/csh
++set a = 2
++if ( \$a > 1 ) then
++   echo Run file for testing
++endif
++EOF
++
++# Set execute permission for sample.csh
++chmod +x sample.csh
++
++echo "-----------------------------------"
++echo "----Testing for bsd-csh command----"
++echo "-----------------------------------"
++bsd-csh sample.csh
++echo "-----------------------------------"
++echo "Testing for bsd-csh command SUCCESS"
++echo "-----------------------------------"
++echo
++
++rm -f sample.csh
++echo
++echo "csh-test: TEST PASSED"

@@ -1,0 +1,104 @@
+diff --git a/gzip-1.6/debian/tests/control b/gzip-1.6/debian/tests/control
+new file mode 100644
+index 0000000..c9fc4cf
+--- /dev/null
++++ b/gzip-1.6/debian/tests/control
+@@ -0,0 +1,2 @@
++Tests: gzip_script, z_script
++Depends: @, grep
+diff --git a/gzip-1.6/debian/tests/gzip_script b/gzip-1.6/debian/tests/gzip_script
+new file mode 100644
+index 0000000..254a6a3
+--- /dev/null
++++ b/gzip-1.6/debian/tests/gzip_script
+@@ -0,0 +1,30 @@
++#!/bin/sh
++
++set -e
++
++#Checking for autopkgtest dir, where tests script run on
++if [ -z "$ADTTMP" ]
++then
++        echo "Required envvar \"$ADTTMP\"is not set" >&2
++        exit 1
++fi
++
++cd $ADTTMP
++
++echo "====Start gzip===="
++
++TEST_FILE=testing.txt
++GZ_FILE=$TEST_FILE".gz"
++FILE_CONTENT="hello gzip"
++
++cat << EOF > $TEST_FILE
++$FILE_CONTENT
++EOF
++
++gzip $TEST_FILE
++echo "PASS"
++
++gunzip $GZ_FILE
++echo "PASS"
++
++echo "====Done===="
+diff --git a/gzip-1.6/debian/tests/z_script b/gzip-1.6/debian/tests/z_script
+new file mode 100644
+index 0000000..d995bb6
+--- /dev/null
++++ b/gzip-1.6/debian/tests/z_script
+@@ -0,0 +1,51 @@
++#!/bin/sh
++
++set -e
++
++#Checking for autopkgtest dir, where tests script run on
++if [ -z "$ADTTMP" ]
++then
++        echo "Required envvar \"$ADTTMP\"is not set" >&2
++        exit 1
++fi
++
++cd $ADTTMP
++
++IPHONE_FILE=iphone.txt
++IPHONE_CONTENT="hello iphone"
++IPHONE_GZ=$IPHONE_FILE".gz"
++
++gen_by_gzip() {
++  for file in $@
++  do
++    gzip $file
++  done
++}
++
++cat << EOF > $IPHONE_FILE
++$IPHONE_CONTENT
++EOF
++
++gen_by_gzip $IPHONE_FILE
++
++ZCAT=$(zcat $IPHONE_GZ)
++if [ "$ZCAT"="$IPHONE_CONTENT" ]; then
++ echo "PASS"
++else
++ exit 1;
++fi
++
++COMPARE_FILE1=diff1.txt
++COMPARE_FILE2=diff2.txt
++ZCOMPARE_FILE1=$COMPARE_FILE1".gz"
++ZCOMPARE_FILE2=$COMPARE_FILE2".gz"
++
++touch $COMPARE_FILE1
++touch $COMPARE_FILE2
++gen_by_gzip $COMPARE_FILE1 $COMPARE_FILE2
++
++zdiff $ZCOMPARE_FILE1 $ZCOMPARE_FILE2
++echo "PASS"
++
++zcmp $ZCOMPARE_FILE1 $ZCOMPARE_FILE2
++echo "PASS"
+-- 
+2.15.1
+

@@ -1,0 +1,44 @@
+diff --git a/htop-2.0.2/debian/tests/control b/htop-2.0.2/debian/tests/control
+new file mode 100644
+index 0000000..ce0f756
+--- /dev/null
++++ b/htop-2.0.2/debian/tests/control
+@@ -0,0 +1,2 @@
++Tests: htop_test
++Depends: @
+diff --git a/htop-2.0.2/debian/tests/htop_test b/htop-2.0.2/debian/tests/htop_test
+new file mode 100644
+index 0000000..c98d0a4
+--- /dev/null
++++ b/htop-2.0.2/debian/tests/htop_test
+@@ -0,0 +1,27 @@
++#!/bin/sh
++
++set -e
++
++pid=1
++user=$USER
++
++echo "===Start htop=="
++
++htop <<EOF
++q
++EOF
++sleep 2
++
++htop -C <<EOF
++q
++EOF
++sleep 2
++
++htop -p --pid=$pid <<EOF
++q
++EOF
++sleep 2
++
++htop -u $user
++
++echo "===Done htop==="
+-- 
+2.15.1
+

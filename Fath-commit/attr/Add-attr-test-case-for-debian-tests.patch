@@ -1,0 +1,82 @@
+diff --git a/debian/tests/attr-test b/debian/tests/attr-test
+new file mode 100644
+index 0000000..76b218e
+--- /dev/null
++++ b/debian/tests/attr-test
+@@ -0,0 +1,67 @@
++#!/bin/sh
++
++#
++# Testing for attr, setfattr and getfattr commands.
++# The first, create a image.img file and mount it with user_xattr option. 
++# After, create a sample.php file for testing
++# and set attributes and extended attributes of the sample.php file
++# by using attr and setfattr command and then get extended attributes
++# of the sample.php file by using getfattr command.
++#
++
++set -e
++
++echo "--------------------------------"
++echo "Create a image.img file and mount it with 'user_xattr' option"
++echo "--------------------------------"
++dd if=/dev/zero of=image.img bs=1M count=1024
++mkfs.ext2 image.img
++mount -o user_xattr image.img /mnt
++echo "-----------------------------------"
++echo "Create a image.img file and mount it with 'user_xattr' option  SUCCESS"
++echo "-----------------------------------"
++echo
++
++echo "--------------------------------"
++echo "Create sample.php file for testing"
++echo "--------------------------------"
++touch /mnt/sample.php
++echo "-----------------------------------"
++echo "Create sample.php file SUCCESS"
++echo "-----------------------------------"
++echo
++
++echo "--------------------------------"
++echo "----Testing for attr command----"
++echo "--------------------------------"
++echo "Set two attributes name and class for the sample.php file"
++attr -s "name" -V "class" /mnt/sample.php
++echo "-----------------------------------"
++echo "Set two attributes name and class for the sample.php file SUCCESS"
++echo "-----------------------------------"
++echo
++
++echo "--------------------------------"
++echo "--Testing for setfattr command--"
++echo "--------------------------------"
++echo "Set extended attributes comment for the sample.php file"
++setfattr -n user.comment -v "This is for testing attr test case" /mnt/sample.php
++echo "-----------------------------------"
++echo "Set extended attributes comment for the sample.php file SUCCESS"
++echo "-----------------------------------"
++echo
++
++echo "--------------------------------"
++echo "--Testing for getfattr command--"
++echo "--------------------------------"
++echo "Get all extended attributes associated of the sample.php file"
++getfattr -d /mnt/sample.php
++echo "-----------------------------------"
++echo "Get all extended attributes associated of the sample.php file SUCCESS"
++echo "-----------------------------------"
++echo 
++rm -f /mnt/sample.php
++umount /mnt
++rm -f image.img
++echo
++echo "attr-test: TEST PASSED"
+diff --git a/debian/tests/control b/debian/tests/control
+new file mode 100644
+index 0000000..fedd77f
+--- /dev/null
++++ b/debian/tests/control
+@@ -0,0 +1,3 @@
++Tests: attr-test
++Depends: @, mount
++Restrictions: needs-root, allow-stderr

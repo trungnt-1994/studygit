@@ -1,0 +1,53 @@
+diff --git a/lsof-4.89+dfsg/debian/tests/control b/lsof-4.89+dfsg/debian/tests/control
+new file mode 100644
+index 0000000..907ef9d
+--- /dev/null
++++ b/lsof-4.89+dfsg/debian/tests/control
+@@ -0,0 +1,2 @@
++Tests: lsof_test
++Depends: @
+diff --git a/lsof-4.89+dfsg/debian/tests/lsof_test b/lsof-4.89+dfsg/debian/tests/lsof_test
+new file mode 100644
+index 0000000..fc0fc27
+--- /dev/null
++++ b/lsof-4.89+dfsg/debian/tests/lsof_test
+@@ -0,0 +1,36 @@
++#!/bin/sh
++
++#This test script is all using -w option for remove warning. The type of output are not needed
++#This test script will be stoped right on the line get error or return status # 0
++set -e
++
++#Checking for autopkgtest dir, where tests script run on
++if [ -z "$ADTTMP" ]
++then
++        echo "Required envvar \"$ADTTMP\"is not set" >&2
++        exit 1
++fi
++
++cd $ADTTMP
++
++echo "Configure: OK"
++echo "===Start lsof==="
++
++lsof -w > lsof_log1
++echo "PASS"
++
++#Check for current user running and set it =root if does not exist
++if [ -z "$USER" ]
++then
++	USER=root
++fi
++
++lsof -w -u $USER > lsof_log2
++echo "PASS"
++
++PID=1
++
++lsof -w -p $PID > lsof_log3
++echo "PASS"
++
++echo "===Done lsof==="
+-- 
+2.15.1
+

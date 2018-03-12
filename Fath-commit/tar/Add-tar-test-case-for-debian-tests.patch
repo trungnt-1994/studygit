@@ -1,0 +1,81 @@
+diff --git a/tar-1.29b/debian/tests/control b/tar-1.29b/debian/tests/control
+new file mode 100644
+index 0000000..df9bf32
+--- /dev/null
++++ b/tar-1.29b/debian/tests/control
+@@ -0,0 +1,2 @@
++Tests: tar_script
++Depends: @, gzip, bzip2
+diff --git a/tar-1.29b/debian/tests/tar_script b/tar-1.29b/debian/tests/tar_script
+new file mode 100644
+index 0000000..c545c3e
+--- /dev/null
++++ b/tar-1.29b/debian/tests/tar_script
+@@ -0,0 +1,64 @@
++#!/bin/sh
++
++set -e
++
++pkg=tar
++
++if [ "$ADTTMP" = "" ] ; then
++  ADTTMP=`mktemp -d /tmp/${pkg}-test.XXXXXX`
++fi
++
++cd $ADTTMP
++
++z_folder=zip_testing
++z_file=zip_testing.txt
++test_file_tar=zip.tar
++test_file_gzip=zip.tar.gz
++test_file_bzip=zip.tar.bz2
++log_file=tar.log
++
++mkdir $z_folder
++
++cat > $z_file <<EOF
++Testing content
++EOF
++
++mv $z_file $z_folder
++
++echo "====Start tar===="
++echo "Create $test_file_tar file with size $(tar -cf - $z_folder | wc -c)KB."
++tar cvf $test_file_tar $z_folder > $log_file
++
++echo "Create $test_file_gzip file with size $(tar -czf - $z_folder | wc -c)KB."
++tar cvzf $test_file_gzip $z_folder > $log_file 
++
++echo "Create $test_file_bzip file with size $(tar -cjf - $z_folder | wc -c)KB."
++tar cvfj $test_file_bzip $z_folder > $log_file
++echo "PASS"
++
++ex_folder=extract_testing
++
++mkdir $ex_folder
++
++mv $test_file_tar $test_file_gzip $test_file_bzip $ex_folder
++
++cd $ex_folder
++
++check_file_extract(){
++  echo "Find expected folder..."
++  find -name $z_folder > $log_file
++  rm -r $z_folder
++}
++
++tar xvf $test_file_tar > $log_file
++check_file_extract
++
++tar xvfz $test_file_gzip > $log_file
++check_file_extract
++
++tar xvfj $test_file_bzip > $log_file
++check_file_extract
++
++echo "PASS"
++
++echo "====Done===="
+-- 
+2.15.1
+

@@ -1,0 +1,95 @@
+diff --git a/at-3.1.20/debian/tests/at_script b/at-3.1.20/debian/tests/at_script
+new file mode 100644
+index 0000000..f8a8dc2
+--- /dev/null
++++ b/at-3.1.20/debian/tests/at_script
+@@ -0,0 +1,77 @@
++#!/bin/sh
++
++set -e
++
++pkg=at
++
++if [ "$ADTTMP" = "" ] ; then
++  ADTTMP=`mktemp -d /tmp/${pkg}-test.XXXXXX`
++fi
++
++#start_job_queued(){
++echo "Start run jobs queued";
++atd
++echo "PASS"
++
++cd $ADTTMP
++
++max_test_minutes=58
++space_test_minutes=`expr 60 - $max_test_minutes`
++space_test_second=`expr $space_test_minutes * 60`
++expected_minutes=`expr $space_test_minutes - 1`
++expected_second=`expr $expected_minutes * 60`
++current_minutes=
++test_file=testing.abc
++test_url=$ADTTMP"/"$test_file
++at_check_log=at.log
++
++set_current_time(){
++  current_minutes=$(date | awk '{print $4}'| cut -d ':' -f2)
++}
++
++check_test_file_exist(){
++  check_time=0
++  echo "====Start at===="
++  while [ $check_time -lt 2 ]
++  do
++    echo "Waiting for few minutes..."
++    sleep $expected_second
++    find -name $test_file > $at_check_log
++    if [ -s $at_check_log ]; then
++      echo "PASS"
++      echo "====Done===="
++      exit 0
++    else
++      check_time=`expr $check_time + 1`
++      if [ $check_time -eq 2 ]; then
++        exit 1
++      fi
++    fi
++  done
++}
++
++testing_command(){
++  set_current_time
++  current_hours=$(date | awk '{print $4}'| cut -d ':' -f1)
++  expected_minutes=`expr $current_minutes + $expected_minutes`
++  if [ $expected_minutes -lt 10 ]; then
++    expected_minutes="0"$expected_minutes
++  fi
++  expected_real_time=$current_hours":"$expected_minutes
++  echo "touch $test_url" | at $expected_real_time > command.log 2>&1
++  check_test_file_exist
++}
++
++testing_start(){
++  set_current_time
++  if [ $current_minutes -gt $max_test_minutes ]; then
++    echo "Waiting for few minutes..."
++    sleep $space_test_second
++    testing_start
++  else
++    testing_command
++    exit 0
++  fi
++}
++
++testing_start
+diff --git a/at-3.1.20/debian/tests/control b/at-3.1.20/debian/tests/control
+new file mode 100644
+index 0000000..bccb159
+--- /dev/null
++++ b/at-3.1.20/debian/tests/control
+@@ -0,0 +1,3 @@
++Tests: at_script
++Depends: @
++Restrictions: needs-root
+-- 
+2.15.1
+

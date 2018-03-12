@@ -1,0 +1,37 @@
+Subject: [PATCH] Debian test for kmod package
+
+---
+ kmod-25/debian/tests/control |  3 +++
+ kmod-25/debian/tests/kmod.sh | 10 ++++++++++
+ 2 files changed, 13 insertions(+)
+ create mode 100644 kmod-25/debian/tests/control
+ create mode 100644 kmod-25/debian/tests/kmod.sh
+
+diff --git a/kmod-25/debian/tests/control b/kmod-25/debian/tests/control
+new file mode 100644
+index 0000000..f84d694
+--- /dev/null
++++ b/kmod-25/debian/tests/control
+@@ -0,0 +1,3 @@
++Tests: kmod.sh
++Depends: @
++
+diff --git a/kmod-25/debian/tests/kmod.sh b/kmod-25/debian/tests/kmod.sh
+new file mode 100644
+index 0000000..2744ac9
+--- /dev/null
++++ b/kmod-25/debian/tests/kmod.sh
+@@ -0,0 +1,10 @@
++#!/bin/sh
++# create debian test for kmod package 
++
++set -e
++kmod list > result.txt
++grep -e "Module" result.txt
++echo "PASS"
++# remove non-necesscery file
++rm result.txt
++echo "========DONE========"
+-- 
+2.16.1
+

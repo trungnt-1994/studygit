@@ -1,0 +1,55 @@
+diff --git a/fam-2.7.0/debian/tests/control b/fam-2.7.0/debian/tests/control
+new file mode 100644
+index 0000000..9761fdf
+--- /dev/null
++++ b/fam-2.7.0/debian/tests/control
+@@ -0,0 +1,3 @@
++Tests: fam_script
++Depends: @
++Restrictions: needs-root
+diff --git a/fam-2.7.0/debian/tests/fam_script b/fam-2.7.0/debian/tests/fam_script
+new file mode 100644
+index 0000000..b6dee25
+--- /dev/null
++++ b/fam-2.7.0/debian/tests/fam_script
+@@ -0,0 +1,37 @@
++#!/bin/sh
++
++set -e
++
++#Package name here
++pkg=fam
++
++if [ "$ADTTMP" = "" ] ; then
++  ADTTMP=`mktemp -d /tmp/${pkg}-test.XXXXXX`
++fi
++
++cd $ADTTMP
++
++echo "====Start $pkg===="
++
++log_file=$pkg".log"
++
++service fam start > $log_file 2>&1
++sleep 2
++service fam status > $log_file 2>&1
++grep -q 'Active: active\|FAM is running.' $log_file
++echo "PASS"
++
++service fam stop > $log_file 2>&1
++sleep 2
++service fam status > $log_file 2>&1 || echo "Ignore warning status!" 
++grep -q 'Active: failed\|FAM is not running' $log_file
++echo "PASS"
++
++service fam restart > $log_file 2>&1
++sleep 2
++service fam status > $log_file 2>&1
++grep -q 'Active: active\|FAM is running.' $log_file
++echo "PASS"
++
++
++echo "====Done===="
+-- 
+2.15.1
+

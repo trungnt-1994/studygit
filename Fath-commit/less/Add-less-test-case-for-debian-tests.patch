@@ -1,0 +1,55 @@
+Subject: [PATCH] Debian test for less package
+
+---
+ less-487/debian/tests/control |  3 +++
+ less-487/debian/tests/less.sh | 29 +++++++++++++++++++++++++++++
+ 2 files changed, 32 insertions(+)
+ create mode 100644 less-487/debian/tests/control
+ create mode 100644 less-487/debian/tests/less.sh
+
+diff --git a/less-487/debian/tests/control b/less-487/debian/tests/control
+new file mode 100644
+index 0000000..e4467c4
+--- /dev/null
++++ b/less-487/debian/tests/control
+@@ -0,0 +1,3 @@
++Tests: less.sh
++Depends: @
++
+diff --git a/less-487/debian/tests/less.sh b/less-487/debian/tests/less.sh
+new file mode 100644
+index 0000000..860ca74
+--- /dev/null
++++ b/less-487/debian/tests/less.sh
+@@ -0,0 +1,29 @@
++#!/bin/sh
++# Create debian test for less package
++
++set -e
++# create files for testing
++cat <<EOF > test1.txt
++This is content of file1
++EOF
++cat <<EOF > test2.txt
++This is content of file2
++EOF
++cat <<EOF > test3.txt
++This is content of file1
++This is content of file2
++EOF
++# run less command open one file
++less test1.txt > output1.txt
++diff test1.txt output1.txt
++echo "PASS"
++# run less command open two file
++less test1.txt test2.txt > output2.txt 
++diff test3.txt output2.txt
++echo "PASS"
++
++# remove non-necesscery file
++rm test*
++rm output*
++
++echo "======DONE======"
+-- 
+2.16.1
