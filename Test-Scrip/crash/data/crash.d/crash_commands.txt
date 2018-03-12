@@ -1,0 +1,21 @@
+ps >/home/trungnt/package-test/testcases/crash/data/crash.d/result_ps.txt
+swap >/home/trungnt/package-test/testcases/crash/data/crash.d/result_swap.txt
+irq >/home/trungnt/package-test/testcases/crash/data/crash.d/result_irq.txt
+ipcs -M >/home/trungnt/package-test/testcases/crash/data/crash.d/result_ipcs.txt
+vm >/home/trungnt/package-test/testcases/crash/data/crash.d/result_vm.txt
+sys >/home/trungnt/package-test/testcases/crash/data/crash.d/result_sys.txt
+files >/home/trungnt/package-test/testcases/crash/data/crash.d/result_files.txt
+alias >/home/trungnt/package-test/testcases/crash/data/crash.d/result_alias.txt
+mount >/home/trungnt/package-test/testcases/crash/data/crash.d/result_mount.txt
+net >/home/trungnt/package-test/testcases/crash/data/crash.d/result_net.txt
+net -s >/home/trungnt/package-test/testcases/crash/data/crash.d/result_net_option1.txt
+net -a >/home/trungnt/package-test/testcases/crash/data/crash.d/result_net_option2.txt
+timer >/home/trungnt/package-test/testcases/crash/data/crash.d/result_timer.txt
+mod >/home/trungnt/package-test/testcases/crash/data/crash.d/result_mod.txt
+sig >/home/trungnt/package-test/testcases/crash/data/crash.d/result_sig.txt
+dev >/home/trungnt/package-test/testcases/crash/data/crash.d/result_dev.txt
+dev -i >/home/trungnt/package-test/testcases/crash/data/crash.d/result_dev_option1.txt
+dev -d >/home/trungnt/package-test/testcases/crash/data/crash.d/result_dev_option2.txt
+set >/home/trungnt/package-test/testcases/crash/data/crash.d/result_set.txt
+exit
+
