@@ -27,8 +27,10 @@ index 0000000..9c58b26
 +
 +set -e
 +# create device for test
-+dd if=/dev/loop0 of=image.img bs=1M count=1024
-+device="/dev/loop0"
++mknod /dev/loop8 b 7 8
++dd if=/dev/loop8 of=image.img bs=1M count=1024
++losetup /dev/loop8 image.img
++device="/dev/loop8"
 +
 +#make linux ext2 filesystem on /dev/loop0
 +mkfs $device
@@ -41,21 +43,27 @@ index 0000000..9c58b26
 +# specify a block count in mkfs
 +mkfs $device 10000 > result3.txt
 +# just get report about errors
-+fsck -n $device > result4.txt
++fsck -n $device
++echo $? > result4.txt
++#do not check mounted file systems
++fsck -M $device
++echo $? > result5.txt
 +
 +# Expected value when run test
 +echo "Linux rev 1.0 ext2 filesystem data," > expected1
 +echo "Linux rev 1.0 ext3 filesystem data," > expected2
 +echo "Creating filesystem with 10000 blocks" > expected3
-+echo "$device: clean," > expected4
++echo "0" > expected4
++echo "0" > expected5
 +
 +# Output value when run test
 +grep -e "Linux rev" result1.txt | awk '{print $2, $3, $4, $5, $6, $7}' > output1
 +grep -e "Linux rev" result2.txt | awk '{print $2, $3, $4, $5, $6, $7}' > output2
 +grep -e "Creating filesystem" result3.txt | awk '{print $1, $2, $3, $4, $6}' > output3
-+grep -e "$device:" result4.txt | awk '{print $1, $2}' > output4
++grep -e "0" result4.txt > output4
++grep -e "0" result5.txt > output5
 +
-+for var in 1 2 3 4
++for var in 1 2 3 4 5
 +do
 +diff expected$var output$var
 +echo "PASS"

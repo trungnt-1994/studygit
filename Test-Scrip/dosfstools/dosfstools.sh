@@ -21,22 +21,29 @@ file -sL $device > ${data_dir}/result2.txt
 # specify a block count
 mkfs $device 10000 > ${data_dir}/result3.txt
 # just get report about errors
-fsck -n $device > ${data_dir}/result4.txt
+fsck -n $device 
+echo $? > ${data_dir}/result4.txt
+# do not check mounted file systems
+fsck -M $device
+echo $? > ${data_dir}/result5.txt
+
 
 # Expected value when run test
 expected1="Linux rev 1.0 ext2 filesystem data,"
 expected2="Linux rev 1.0 ext3 filesystem data,"
 expected3="Creating filesystem with 10000 blocks"
-expected4="$device: clean,"
+expected4="0"
+expected5="0"
 
 # Output value when run test
 output1=$(grep -e "Linux rev" ${data_dir}/result1.txt | awk '{print $2, $3, $4, $5, $6, $7}')
 output2=$(grep -e "Linux rev" ${data_dir}/result2.txt | awk '{print $2, $3, $4, $5, $6, $7}')
 output3=$(grep -e "Creating filesystem" ${data_dir}/result3.txt | awk '{print $1, $2, $3, $4, $6}')
-output4=$(grep -e "$device:" ${data_dir}/result4.txt | awk '{print $1, $2}')
+output4=$(grep -e "0" ${data_dir}/result4.txt)
+output5=$(grep -e "0" ${data_dir}/result5.txt)
 
 check=0
-for var in 1 2 3 4
+for var in 1 2 3 4 5
 do
   expected_var="expected$var"
   output_var="output$var"
