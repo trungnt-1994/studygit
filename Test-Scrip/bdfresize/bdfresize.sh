@@ -11,6 +11,7 @@ pixel_size2=$(grep  "PIXEL_SIZE" ${log_file} | awk '{print $2}')
 
 expected=`expr $pixel_size1 \* $size_change`
 output=$pixel_size2
+
 check=0
 # if PIXEL_SIZE in SIZE_FILE_ROOT= = SIZE_FILE_CHANGE is True, else False
 if [ "$expected" = "" ] && [ "$output" = "" ]; then
