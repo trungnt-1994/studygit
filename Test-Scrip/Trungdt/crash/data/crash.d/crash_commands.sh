@@ -18,4 +18,3 @@ dev -i >${data_dir}/result_dev_option1.txt
 dev -d >${data_dir}/result_dev_option2.txt
 set >${data_dir}/result_set.txt
 exit
-

@@ -1,12 +1,3 @@
-Subject: [PATCH] Debian test for bash package
-
----
- bash-4.4.18/debian/tests/bash.sh | 37 +++++++++++++++++++++++++++++++++++++
- bash-4.4.18/debian/tests/control |  2 ++
- 2 files changed, 39 insertions(+)
- create mode 100644 bash-4.4.18/debian/tests/bash.sh
- create mode 100644 bash-4.4.18/debian/tests/control
-
 diff --git a/bash-4.4.18/debian/tests/bash.sh b/bash-4.4.18/debian/tests/bash.sh
 new file mode 100644
 index 0000000..e605aca
