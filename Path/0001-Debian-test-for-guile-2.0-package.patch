@@ -1,0 +1,91 @@
+diff --git a/guile-2.0-2.0.13+1/debian/tests/control b/guile-2.0-2.0.13+1/debian/tests/control
+new file mode 100644
+index 0000000..e6be903
+--- /dev/null
++++ b/guile-2.0-2.0.13+1/debian/tests/control
+@@ -0,0 +1,4 @@
++Tests: guile-2.0.sh
++Depends: @
++Restrictions: needs-root
++
+diff --git a/guile-2.0-2.0.13+1/debian/tests/guile-2.0.sh b/guile-2.0-2.0.13+1/debian/tests/guile-2.0.sh
+new file mode 100644
+index 0000000..ad12ced
+--- /dev/null
++++ b/guile-2.0-2.0.13+1/debian/tests/guile-2.0.sh
+@@ -0,0 +1,73 @@
++#!/bin/sh
++# author: trungntcmc
++#======================================================
++# DESCRIPTION: Create test script for guile-2.0 package
++#              GNU Guile is an implementation of the
++#              Scheme programming language.
++#======================================================
++
++set -e
++# Create file to run command
++cat << EOF > guile-2.0_command.txt
++(+ 1 2)
++(define (plus_function a b ) (+ a b))
++(plus_function (* 2 3) 4)
++(map 1+ '(1 2 3))
++(define (factorial n)
++(if (= n 0)
++1
++(* n (factorial (- n 1)))))
++(factorial 5)
++(expt 2 3)
++(define hello
++  (lambda (name)
++   (string-append "Hello " name)))
++(hello "Guile-2.0")
++(append '(1 2) '(3 4))
++(eq? (list 3) (list 3))
++(if #t
++    "This is true"
++    "This is false")
++(cond ((> 2 2) (error "wrong!"))
++      ((< 2 2) (error "wrong again!"))
++      (else 'Oke))
++(iota 10)
++EOF
++
++# Create file expected.txt
++cat << EOF > expected.txt
++\$1 = 3
++\$2 = 10
++\$3 = (2 3 4)
++\$4 = 120
++\$5 = 8
++\$6 = "Hello Guile-2.0"
++\$7 = (1 2 3 4)
++\$8 = #f
++\$9 = "This is true"
++\$10 = Oke
++\$11 = (0 1 2 3 4 5 6 7 8 9)
++EOF
++
++# Run guile commands of guile-2.0 package in file guile-2.0_command.txt
++guile < guile-2.0_command.txt > result.txt
++
++grep "$1 = 3" result.txt > output.txt
++grep "$2 = 10" result.txt >> output.txt
++grep "$3 = (2 3 4)" result.txt >> output.txt
++grep "$4 = 120" result.txt >> output.txt
++grep "$5 = 8" result.txt >> output.txt
++grep "$6 = \"Hello Guile-2.0\"" result.txt >> output.txt
++grep "$7 = (1 2 3 4)" result.txt >> output.txt
++grep "$8 = #f" result.txt >> output.txt
++grep "$9 = \"This is true\"" result.txt >> output.txt
++grep "$10 = Oke" result.txt >> output.txt
++grep "$11 = (0 1 2 3 4 5 6 7 8 9)" result.txt >> output.txt
++
++# Compare two file to get result
++diff expected.txt output.txt
++echo "PASS"
++
++# Delete non-necesscery file after run test
++rm -f output.txt
++rm -f result.txt
+-- 
+2.16.1

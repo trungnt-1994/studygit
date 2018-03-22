@@ -1,0 +1,56 @@
+diff --git a/bdfresize-1.5/debian/tests/bdfresize.sh b/bdfresize-1.5/debian/tests/bdfresize.sh
+new file mode 100644
+index 0000000..4dbf21b
+--- /dev/null
++++ b/bdfresize-1.5/debian/tests/bdfresize.sh
+@@ -0,0 +1,39 @@
++#!/bin/sh
++#========================================================================
++# DESCRIPTION: Test for the bdf file is resize when run command bdfresize
++#              Run command bdfresize to Resize BDF Format Font
++#========================================================================
++
++set -e
++# Create file bdfresize1.bdf for test
++cat <<EOF > bdfresize1.bdf
++STARTFONT 2.1
++COMMENT This is sample font in 2.1 format.
++FONT Sample
++SIZE 8 200 200
++FONTBOUNDINGBOX 9 24 -2 -6
++STARTPROPERTIES 1
++PIXEL_SIZE 11
++ENDPROPERTIES
++CHARS 0
++ENDFONT
++EOF
++
++sample_font=bdfresize1.bdf
++factor=2/1
++size_before=$(grep "^PIXEL_SIZE " $sample_font | cut -d' ' -f2)
++size_after_expect=$(($size_before * $factor))
++
++# Run bdfesize command to change size of bdf file
++bdfresize -f $factor $sample_font > bdfresize2.bdf
++if [ $? != 0 ]; then
++        echo "[FAIL] bdfresize failed to run!"
++fi
++
++# Check size-after run bdfresize command
++size_after=$(grep "^PIXEL_SIZE " bdfresize2.bdf | cut -d' ' -f2)
++if [ "$size_after" != "$size_after_expect" ]; then
++        echo "[FAIL] Resize to wrong size!"
++fi
++
++echo "=====DONE====="
+diff --git a/bdfresize-1.5/debian/tests/control b/bdfresize-1.5/debian/tests/control
+new file mode 100644
+index 0000000..741c697
+--- /dev/null
++++ b/bdfresize-1.5/debian/tests/control
+@@ -0,0 +1,3 @@
++Tests: bdfresize.sh
++Depends: @
++
+-- 
+2.16.1
