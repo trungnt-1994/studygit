@@ -1,0 +1,4 @@
+#!/bin/sh
+
+/etc/init.d/acpid restart &
+nohup indicator &

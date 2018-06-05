@@ -1,0 +1,23 @@
+#!/bin/sh
+
+set -e
+
+# Get lsb functions
+. /lib/lsb/init-functions
+
+[ -e /usr/bin/ntpcheckup ] || exit 1
+[ -e /sbin/hwclock ] || exit 1
+
+case "$1" in
+  start)
+    log_begin_msg "Starting hwclock and ntpcheckup"
+	hwclock --hctosys --localtime &>/dev/null
+	hwclock --systohc --localtime &>/dev/null
+	ntpcheckup &>/dev/null
+    log_end_msg $?
+    ;;
+  *)
+    log_success_msg "Usage: /etc/init.d/ntpcheckup {start}"
+    exit 1
+esac
+

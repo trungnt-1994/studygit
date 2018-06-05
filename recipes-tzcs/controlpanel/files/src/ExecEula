@@ -1,0 +1,14 @@
+#!/bin/sh
+
+#========================================================================
+# TZCS Control Panel
+# Execute EULA
+#========================================================================
+ps aux | grep xpdf | grep "License.pdf" > /dev/null
+if [ $? -ne 0 ]; then
+    xpdf /usr/share/doc/License.pdf
+else
+    wid=$(xdotool search --name "Xpdf: /usr/share/doc/License.pdf")
+    xdotool windowactivate $wid
+fi
+exit 0

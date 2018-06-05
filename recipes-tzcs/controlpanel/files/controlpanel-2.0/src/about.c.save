@@ -1,0 +1,71 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <time.h>
+
+#include <tzcslib/TzcsUtil.h>
+#include <tzcs_env.h>
+
+#include "common.h"
+#include "about.h"
+
+#define get_value(buf, s) \
+do { \
+	int i = 0; \
+	while (buf[i++] != '='); \
+	strcpy(s, buf + i); \
+} while (0)
+
+About about = {
+	.eula = EULA_PDF,
+	.osln = OSLN_PDF,
+};
+
+__attribute__((constructor))
+static void __init(void)
+{
+	{ /* get bios version */
+		memset(about.bios_version, 0, ARRAY_COUNT(about.bios_version));
+		get_hci_string(VAL_BIOS_VER, about.bios_version);
+	}
+
+	{ /* get copyright */
+		char year[5];
+		time_t now; time(&now);
+		strftime(year, 5, "%Y", localtime(&now));
+		about.copyright = atoi(year);
+	}
+
+	{ /* get tmzc information */
+		FILE *fp;
+		char buf[512];
+
+		fp = fopen(TMZC_BUILD_INFO, "r");
+		if (!fp) {
+			CCERROR("%s no such file or permission denied!\n", TMZC_BUILD_INFO);
+			return;
+		}
+
+		while (ccgetline(buf, 512, fp) > 0) {
+			if (STRING_CONTAIN(buf, "TMZC_VERSION")) {
+				get_value(buf, about.tmzc_version);
+			} else if (STRING_CONTAIN(buf, "BUILD_ID")) {
+				get_value(buf, about.build_id);
+			} else {
+				CCINFO("info: %s\n", buf);
+			}
+		}
+
+		fclose(fp);
+	}
+
+#ifdef CTRLPANEL_DEBUG
+	CCDEBUG("Control Panel About INIT: BEGIN\n");
+	__PRINT("Eula file: %s\n", about.eula);
+	__PRINT("OSLN file: %s\n", about.osln);
+	__PRINT("Copyright: %d\n", about.copyright);
+	__PRINT("BIOS version: %s\n", about.bios_version);
+	__PRINT("TMZC version: %s\n", about.tmzc_version);
+	__PRINT("Build ID: %s\n", about.build_id);
+	CCDEBUG("Control Panel About INIT: END\n");
+#endif
+}
