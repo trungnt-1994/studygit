@@ -1,6 +1,0 @@
-#!/bin/sh
-
-if [ -f  "/opt/Synaptics/HKLM_Kernel" ] && ( echo $1 | egrep -q '^[0-7]+$' ) 
-then
-	echo "HKR, Software\Synaptics\SynTP\Defaults,PalmRT,0x00010001,$1" >> /opt/Synaptics/HKLM_Kernel
-fi
